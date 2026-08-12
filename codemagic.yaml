@@ -7,21 +7,21 @@ workflows:
       flutter: stable
       java: 17
     scripts:
-      - name: Configurar propiedades locales de Android
+      - name: Reconstruir estructura nativa Android v2
         script: |
-          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
-      - name: Obtener dependencias de Flutter
+          flutter create temp_app --platforms=android --org com.viajesync.app
+          rm -rf android
+          cp -r temp_app/android ./android
+          rm -rf temp_app
+      - name: Descargar dependencias de Flutter
         script: |
-          flutter packages pub get
-      - name: Compilar APK de Release para Android
+          flutter pub get
+      - name: Compilar APK de Release
         script: |
-          flutter build apk --release --split-per-abi
+          flutter build apk --release
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
     publishing:
       email:
         recipients:
           - juanpiguerra600@gmail.com
-        notify:
-          on_success: true
-          on_failure: true
